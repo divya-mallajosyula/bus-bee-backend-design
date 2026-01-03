@@ -48,7 +48,7 @@ Server: Gunicorn
 
 Deployment Platform: Render
 
-📂 Project Structure
+ Project Structure
 backend/
 ├── routes/
 │   ├── auth.py
