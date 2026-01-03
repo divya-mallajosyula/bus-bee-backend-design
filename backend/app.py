@@ -1,8 +1,10 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
-import config
 from routes.auth import auth_bp
 from routes.bus import bus_bp
 from routes.booking import booking_bp
@@ -16,13 +18,16 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    client = MongoClient(config.MONGO_URI)
+    mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/busbee")
+    client = MongoClient(mongo_uri)
     app.db = client.get_default_database()
 
-    app.config["JWT_SECRET"] = config.JWT_SECRET
-    app.config["JWT_ALGORITHM"] = config.JWT_ALGORITHM
-    app.config["PDF_STORAGE_PATH"] = config.PDF_STORAGE_PATH
-    app.config["JWT_EXPIRE_MINUTES"] = config.TOKEN_EXPIRE_MINUTES
+    app.config["JWT_SECRET"] = os.getenv("JWT_SECRET", "change_me")
+    app.config["JWT_ALGORITHM"] = os.getenv("JWT_ALGORITHM","HS256")
+    app.config["JWT_EXPIRE_MINUTES"] = int(os.getenv("JWT_EXPIRE_MINUTES", 60))
+    app.config["PDF_STORAGE_PATH"] = os.getenv("PDF_STORAGE_PATH", os.path.join(os.getcwd(), "uploads"))
+
+
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(bus_bp, url_prefix="/api/buses")
