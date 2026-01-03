@@ -18,9 +18,9 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/busbee")
+    mongo_uri = os.getenv("MONGO_URI")
     client = MongoClient(mongo_uri)
-    app.db = client.get_default_database()
+    app.db = client["busbee"]
 
     app.config["JWT_SECRET"] = os.getenv("JWT_SECRET", "change_me")
     app.config["JWT_ALGORITHM"] = os.getenv("JWT_ALGORITHM","HS256")
